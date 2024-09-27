@@ -8,4 +8,5 @@
 ## git
 1. `git init`
 2. `git status`
-3. `git add {*.py}
+3. `git add *.py`
+4. `git commit -m "***"`
