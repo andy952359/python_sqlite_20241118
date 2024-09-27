@@ -9,4 +9,7 @@
 1. `git init`
 2. `git status`
 3. `git add *.py`
-4. `git commit -m "***"`
+4. `git commit -m " *** " `
+5. `git remote add origin https://github.com/***.git`
+6. `git remote`
+7. `git push -u origin master`
