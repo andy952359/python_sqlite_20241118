@@ -12,11 +12,11 @@
 4. `git commit -m " *** " `
 5. `git remote add origin https://github.com/***.git`
 6. `git remote`
-7. `git push -u origin master`
-8. check branch
+7. `git push -u origin main`
+   * check branch  
   `git branch -a`
-9. rename local branch
+   * rename local branch    
   `git branch -m master main`
-10. delete remote branch
-  ``
-11. 
+   * pull remote branch  
+  `git  pull --rebase origin main`
+8. 
