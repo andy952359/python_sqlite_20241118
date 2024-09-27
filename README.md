@@ -13,10 +13,7 @@
 5. `git remote add origin https://github.com/***.git`
 6. `git remote`
 7. `git push -u origin main`
-   * check branch  
-  `git branch -a`
-   * rename local branch    
-  `git branch -m master main`
-   * pull remote branch  
-  `git  pull --rebase origin main`
+   * check branch  `git branch -a`
+   * rename local branch  `git branch -m master main`
+   * pull remote branch  `git  pull --rebase origin main`
 8. 
