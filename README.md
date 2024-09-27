@@ -5,4 +5,7 @@
   <https://sqlitebrowser.org/dl/>
 3. `cmd` *Open as administrator*
 4. `conda install anaconda::sqlite`
-# 
+## git
+1. `git init`
+2. `git status`
+3. `git add {*.py}
