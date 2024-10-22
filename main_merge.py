@@ -1,6 +1,6 @@
 import pandas as pd
 import sqlite3
-import insert_csv as csv
+# import insert_csv as csv
 import insert2 
 import column_modify as cm
 
@@ -12,7 +12,10 @@ add_c = "期數"
 add_text = "108"
 delete_c = "期數"
 
-select_check = csv.insert_csv (csv_address,db_address,table_name)
+# select_check = csv.insert_csv (csv_address,db_address,table_name)
+# print(select_check)
+
+select_check = insert2.insert_csv (csv_address,csv_address2,db_address,table_name)
 print(select_check)
 
 
