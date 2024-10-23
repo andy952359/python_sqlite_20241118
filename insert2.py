@@ -13,10 +13,12 @@ def insert_csv (csv_address,csv_address2,db_address,table_name):
     df_compare = df[df['Customer Id'] != df2['Customer Id']] # 比對特定欄位，不吻合保留
     
     df_trans_column = df.merge(df2, on='Customer Id', how='left', suffixes=('', '_df2'))
-    # 比對on，欄資訊補到後面，重複不剃除
+    # 比對on，吻合的補到最左欄，重複不剃除
 
-    # Step 2: 篩選出在 df 中不存在的 df2 資料
-    df2_only = df2[~df2['Customer Id'].isin(df['Customer Id'])]
+    
+    df2_suffix = df2.rename(columns={col: f"{col}_df2" for col in df2.columns}) # 手動為 df2 欄位加上後綴 '_df2'
+    df2_only = df2_suffix[~df2_suffix['Customer Id_df2'].isin(df['Customer Id'])] # 不吻合放到最下列
+
     
     df_final = pd.concat([df_trans_column, df2_only], ignore_index=True)
 
