@@ -13,15 +13,21 @@ def insert_csv (csv_address,csv_address2,db_address,table_name):
     # df_compare = df[df['Customer Id'] != df2['Customer Id']] # 比對特定欄位，不吻合保留
     
     
-    df_trans_column = df.merge(df2, on='Customer Id', how='left', suffixes=('', '_df2'))
+    df_trans_column = df.merge(df2, on='Customer Id', how='inner', suffixes=('', '_df2'))
     # 比對on，吻合的補到最左欄，重複不剃除
+    df_trans_column = df_trans_column.assign(status="df_id == df2_id")
 
     
     df2_suffix = df2.rename(columns={col: f"{col}_df2" for col in df2.columns}) # 手動為 df2 欄位加上後綴 '_df2'
     df2_only = df2_suffix[~df2_suffix['Customer Id_df2'].isin(df['Customer Id'])] # 不吻合放到最下列
+    df2_only['status'] = '~df2'
 
     
-    df_final = pd.concat([df_trans_column, df2_only], ignore_index=True)
+    df_only = df[~df['Customer Id'].isin(df2['Customer Id'])]
+    df_only['status'] = '~df'
+
+    # Step 5: 拼接合併結果、df2_only 和 df_only
+    df_final = pd.concat([df_trans_column, df2_only, df_only], ignore_index=True)
 
     # f = open(path, 'w')
     # f.write(df_compare.astype(str).to_string())
