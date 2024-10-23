@@ -6,11 +6,12 @@ def insert_csv (csv_address,csv_address2,db_address,table_name):
     df2 = pd.read_csv(csv_address2)  # 讀取CSV資料集檔案
 
     path = 'output.txt'
-    df_compare = df == df2 # 檢查儲存格內容是否相同
+    # df_compare_every = df == df2 # 檢查所有對應儲存格內容是否相同
                            # Can only compare identically-labeled (both index and columns) DataFrame objects 
-    # df_compare = df[(df_compare).all(axis=1) == False] #不完全相同資料列
-    df, df2 = df.align(df2, join='outer', axis=None)  # 對齊、補植
-    df_compare = df[df['Customer Id'] != df2['Customer Id']] # 比對特定欄位，不吻合保留
+    # df_compare_every_list = df[(df_compare_every).all(axis=1) == False] #列出不完全相同資料列
+    df, df2 = df.align(df2, join='outer', axis=None)  # 對齊、補值
+    # df_compare = df[df['Customer Id'] != df2['Customer Id']] # 比對特定欄位，不吻合保留
+    
     
     df_trans_column = df.merge(df2, on='Customer Id', how='left', suffixes=('', '_df2'))
     # 比對on，吻合的補到最左欄，重複不剃除
@@ -26,8 +27,8 @@ def insert_csv (csv_address,csv_address2,db_address,table_name):
     # f.write(df_compare.astype(str).to_string())
     # f.close()
 
-    with open(path, 'w') as f:
-        f.write(df_compare.astype(str).to_string())
+    # with open(path, 'w') as f:
+    #     f.write(df_compare.astype(str).to_string())
 
 
     # df_merge = pd.concat([df,df2], ignore_index=True, sort=False) #合併
