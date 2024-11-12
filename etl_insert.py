@@ -8,12 +8,7 @@ import chardet
 
 def insert_csv (csv_address3,db_address,table_name,table_name2):
     
-    # 讀encoding
-    with open(csv_address3, 'rb') as f:
-        result = chardet.detect(f.read())
-        encoding = result['encoding']
-    
-    df3 = pd.read_csv(csv_address3, encoding=encoding)  # 讀取CSV資料集檔案
+    df3 = pd.read_csv(csv_address3, encoding='BIG5')  # 讀取CSV資料集檔案，BIG5
     print(df3)
 
     # 讀sql
