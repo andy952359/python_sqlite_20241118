@@ -5,7 +5,8 @@ def insert_csv (csv_address,csv_address2,db_address,table_name):
     df = pd.read_csv(csv_address)  # 讀取CSV資料集檔案
     df2 = pd.read_csv(csv_address2)  # 讀取CSV資料集檔案
 
-    path = 'output.txt'
+    # path = 'output.txt'
+
     # df_compare_every = df == df2 # 檢查所有對應儲存格內容是否相同
                            # Can only compare identically-labeled (both index and columns) DataFrame objects 
     # df_compare_every_list = df[(df_compare_every).all(axis=1) == False] #列出不完全相同資料列
@@ -15,7 +16,7 @@ def insert_csv (csv_address,csv_address2,db_address,table_name):
     
     df_trans_column = df.merge(df2, on='Customer Id', how='inner', suffixes=('', '_df2'))
     # 比對on，吻合的補到最左欄，重複不剃除
-    df_trans_column = df_trans_column.assign(status="df_id == df2_id")
+    df_trans_column = df_trans_column.assign(status="df_id == df2_id") # 新增status欄
 
     
     df2_suffix = df2.rename(columns={col: f"{col}_df2" for col in df2.columns}) # 手動為 df2 欄位加上後綴 '_df2'
@@ -39,7 +40,6 @@ def insert_csv (csv_address,csv_address2,db_address,table_name):
 
     # df_merge = pd.concat([df,df2], ignore_index=True, sort=False) #合併
     # df_merge = df_merge.drop_duplicates() # 剃除完全重複
-
 
     with sqlite3.connect(db_address) as conn:
         df_final.to_sql(table_name, conn, if_exists='replace', index=False) # 新增資料表
