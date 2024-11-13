@@ -2,8 +2,8 @@ import pandas as pd
 import sqlite3
 
 def insert_csv (csv_address,csv_address2,db_address,table_name):
-    df = pd.read_csv(csv_address)  # 讀取CSV資料集檔案
-    df2 = pd.read_csv(csv_address2)  # 讀取CSV資料集檔案
+    df = pd.read_csv(csv_address, encoding='BIG5')  # 讀取CSV資料集檔案
+    df2 = pd.read_csv(csv_address2, encoding='BIG5')  # 讀取CSV資料集檔案
 
     # path = 'output.txt'
 

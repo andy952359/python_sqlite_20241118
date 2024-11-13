@@ -1,6 +1,10 @@
 csv
 db
 pic
+<<<<<<< HEAD
 request
+=======
+>>>>>>> 90bd46c1255d7d6bf498a1dcfe404a28ff5f4825
 output.txt
 __pycache__
+request
