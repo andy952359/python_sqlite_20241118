@@ -35,7 +35,8 @@ check_text = '無'
 select_check = etl_insert.insert_csv (csv_address3,db_address,table_name,table_name2,on_etl,csv_name3)
 print(select_check)
 
-select_check = check.e_number (db_address,table_name2,check_col)
+
+select_check = check.e_number (db_address,table_name2,check_col,check_col2,check_text)
 select_check = check.FAN_number (db_address,table_name2,check_col)
 select_check = check.text_check (db_address,table_name2,check_col2,check_text)
 

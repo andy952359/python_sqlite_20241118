@@ -4,11 +4,13 @@ import numpy as np
 
 
 
-def e_number (db_address,table_name2,check_col):
+def e_number (db_address,table_name2,check_col,check_col2,check_text):
     # 讀sql
     with sqlite3.connect(db_address) as conn:
         df_sql = pd.read_sql(f"SELECT * FROM {table_name2}", conn)
-        
+
+    if f"{check_col2} satisify" not in df_sql.columns:
+        df_sql[f"{check_col2} satisify"] = ""  # 初始化為空字串      
 
     # ^：表示字串的開始。
     # [A-Za-z]：表示第1個字元為英文字母（大小寫均可）。
@@ -18,7 +20,14 @@ def e_number (db_address,table_name2,check_col):
 
     pattern = r'^[A-Za-z]\d{5}[A-Za-z]{9}$'
     # 添加一個新欄位來檢查是否符合格式
-    df_sql['e_number_check'] = df_sql[check_col].str.match(pattern)
+    # df_sql['e_number_check'] = df_sql[check_col].str.match(pattern)
+
+    df_sql[f"{check_col2} satisify"] = np.where(
+    df_sql[f"{check_col2} satisify"].notna(),  # 檢查欄位是否已有值
+    df_sql[f"{check_col2} satisify"]  + np.where(df_sql[check_col].str.match(pattern),"","e_number_error; ")
+    ,np.where(df_sql[check_col].str.match(pattern),"","e_number_error; ")   
+    )
+
 
     with sqlite3.connect(db_address) as conn:
         df_sql.to_sql(table_name2, conn, if_exists='replace', index=False) # 新增資料表
@@ -32,7 +41,7 @@ def FAN_number (db_address,table_name2,check_col):
     with sqlite3.connect(db_address) as conn:
         df_sql = pd.read_sql(f"SELECT * FROM {table_name2}", conn)
         conn.commit()
-    
+
     pattern = r'^[a][A]'
 
     # 添加一個新欄位來檢查是否符合格式
@@ -50,9 +59,24 @@ def text_check (db_address,table_name2,check_col2,check_text):
         df_sql = pd.read_sql(f"SELECT * FROM {table_name2}", conn)
         conn.commit()
 
-    df_sql[f"{check_col2} satisify"] = np.where(df_sql[check_col2] == check_text,                                          
-    f"{check_col2} == {check_text}", 
-    f"{check_col2} != {check_text}")
+    if f"{check_col2} satisify" not in df_sql.columns:
+        df_sql[f"{check_col2} satisify"] = ""  # 初始化為空字串   
+
+    # df_sql[f"{check_col2} satisify"] = np.where(df_sql[check_col2] == check_text,                                          
+    # f"{check_col2} == {check_text}", 
+    # f"{check_col2} != {check_text}")
+
+    df_sql[f"{check_col2} satisify"] = np.where(
+    df_sql[f"{check_col2} satisify"].notna(),  # 檢查欄位是否已有值
+    df_sql[f"{check_col2} satisify"] + np.where(df_sql[check_col2] == check_text,
+        f"{check_col2} == {check_text}; ",
+        f"{check_col2} != {check_text}; ")
+    ,np.where(df_sql[check_col2] == check_text, 
+        f"{check_col2} == {check_text}; ",
+        f"{check_col2} != {check_text}; ")   
+    )
+
+
 
     with sqlite3.connect(db_address) as conn:
         df_sql.to_sql(table_name2, conn, if_exists='replace', index=False) # 新增資料表

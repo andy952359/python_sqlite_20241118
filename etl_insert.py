@@ -2,8 +2,6 @@ import pandas as pd
 import sqlite3
 import numpy as np
 import chardet
-# -*- coding: utf-8 -*-
-
 
 
 def insert_csv (csv_address3,db_address,table_name,table_name2,on_etl,csv_name3):
