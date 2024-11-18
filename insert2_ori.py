@@ -1,7 +1,7 @@
 import pandas as pd
 import sqlite3
 
-def insert_csv (csv_address,csv_address2,db_address,table_name,on,csv_name,csv_name2):
+def insert_csv (csv_address,csv_address2,db_address,table_name):
     df = pd.read_csv(csv_address, encoding='BIG5')  # 讀取CSV資料集檔案
     df2 = pd.read_csv(csv_address2, encoding='BIG5')  # 讀取CSV資料集檔案
 
@@ -14,18 +14,18 @@ def insert_csv (csv_address,csv_address2,db_address,table_name,on,csv_name,csv_n
     # df_compare = df[df['Customer Id'] != df2['Customer Id']] # 比對特定欄位，不吻合保留
     
     
-    df_trans_column = df.merge(df2, on=on, how='inner', suffixes=('', f"_{csv_name2}"))
+    df_trans_column = df.merge(df2, on='Customer Id', how='inner', suffixes=('', '_df2'))
     # 比對on，吻合的補到最左欄，重複不剃除
-    df_trans_column = df_trans_column.assign(status = f"{csv_name}={csv_name2}") # 新增status欄
+    df_trans_column = df_trans_column.assign(status="df_id == df2_id") # 新增status欄
 
     
-    df2_suffix = df2.rename(columns={col: f"{col}_{csv_name2}" for col in df2.columns}) # 手動為 df2 欄位加上後綴 '_df2'
-    df2_only = df2_suffix[~df2_suffix[f"{on}_{csv_name2}"].isin(df[on])] # 不吻合放到最下列
-    df2_only['status'] = f"~{csv_name2}"
+    df2_suffix = df2.rename(columns={col: f"{col}_df2" for col in df2.columns}) # 手動為 df2 欄位加上後綴 '_df2'
+    df2_only = df2_suffix[~df2_suffix['Customer Id_df2'].isin(df['Customer Id'])] # 不吻合放到最下列
+    df2_only['status'] = '~df2'
 
     
-    df_only = df[~df[on].isin(df2[on])]
-    df_only['status'] = f"~{csv_name}"
+    df_only = df[~df['Customer Id'].isin(df2['Customer Id'])]
+    df_only['status'] = '~df'
 
     # Step 5: 拼接合併結果、df2_only 和 df_only
     df_final = pd.concat([df_trans_column, df2_only, df_only], ignore_index=True)
