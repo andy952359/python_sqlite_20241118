@@ -41,10 +41,10 @@ def text_check (db_address,table_name2,check_status,check_col,check_text):
     df_sql[f"{check_status}"] = np.where(
     df_sql[f"{check_status}"].notna(),  # 檢查欄位是否已有值
     df_sql[f"{check_status}"] + np.where(df_sql[check_col] == check_text,
-        f"{check_col} == {check_text}; ",
+        f"",
         f"{check_col} != {check_text}; ")
     ,np.where(df_sql[check_col] == check_text, 
-        f"{check_col} == {check_text}; ",
+        f"",
         f"{check_col} != {check_text}; ")   
     )
     ## check

@@ -6,7 +6,7 @@ import chardet
 
 def insert_csv (csv_address3,db_address,table_name,table_name2,on_etl,on_etl_2,csv_name3):
     
-    df3 = pd.read_csv(csv_address3, encoding='utf-8-sig')  # 讀取CSV資料集檔案，BIG5
+    df3 = pd.read_csv(csv_address3, dtype=str)  
 
     # 讀sql
     with sqlite3.connect(db_address) as conn:
@@ -32,12 +32,11 @@ def insert_csv (csv_address3,db_address,table_name,table_name2,on_etl,on_etl_2,c
 
     # Step 5: 拼接合併結果、df2_only 和 df_only
     df_final = pd.concat([df_trans_column, df3_only, df_sql_only], ignore_index=True)
-    
+    # df_final = pd.concat([df_trans_column], ignore_index=True)
 
 
 
     ## check
     with sqlite3.connect(db_address) as conn:
         df_final.to_sql(table_name2, conn, if_exists='replace', index=False) # 新增資料表
-        select_check = pd.read_sql(f"SELECT * FROM  {table_name} WHERE Country='Togo'", conn)
-        return select_check
+
