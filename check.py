@@ -4,7 +4,7 @@ import numpy as np
 
 
 
-def e_number (db_address,table_name2,check_col,check_col2,check_text):
+def e_number (db_address,table_name2,check_col,check_col2,check_text,pattern1):
     # 讀sql
     with sqlite3.connect(db_address) as conn:
         df_sql = pd.read_sql(f"SELECT * FROM {table_name2}", conn)
@@ -18,14 +18,10 @@ def e_number (db_address,table_name2,check_col,check_col2,check_text):
     # [A-Za-z]{9}：表示接下來的9個字元為英文字母（大小寫均可）。
     # $：表示字串的結束。
 
-    pattern = r'^[A-Za-z]\d{5}[A-Za-z]{9}$'
-    # 添加一個新欄位來檢查是否符合格式
-    # df_sql['e_number_check'] = df_sql[check_col].str.match(pattern)
-
     df_sql[f"{check_col2} satisify"] = np.where(
     df_sql[f"{check_col2} satisify"].notna(),  # 檢查欄位是否已有值
-    df_sql[f"{check_col2} satisify"]  + np.where(df_sql[check_col].str.match(pattern),"","e_number_error; ")
-    ,np.where(df_sql[check_col].str.match(pattern),"","e_number_error; ")   
+    df_sql[f"{check_col2} satisify"]  + np.where(df_sql[check_col].str.match(pattern1),"","e_number_error; ")
+    ,np.where(df_sql[check_col].str.match(pattern1),"","e_number_error; ")   
     )
 
 
@@ -36,21 +32,28 @@ def e_number (db_address,table_name2,check_col,check_col2,check_text):
 
 
 
-def FAN_number (db_address,table_name2,check_col):
+
+def FAN_number (db_address,table_name2,check_col,check_col2,pattern2):
     # 讀sql
     with sqlite3.connect(db_address) as conn:
         df_sql = pd.read_sql(f"SELECT * FROM {table_name2}", conn)
         conn.commit()
 
-    pattern = r'^[a][A]'
-
     # 添加一個新欄位來檢查是否符合格式
-    df_sql['FAN_number_check'] = df_sql[check_col].str.match(pattern)
+    if f"{check_col2} satisify" not in df_sql.columns:
+        df_sql[f"{check_col2} satisify"] = ""  # 初始化為空字串      
+
+    df_sql[f"{check_col2} satisify"] = np.where(
+    df_sql[f"{check_col2} satisify"].notna(),  # 檢查欄位是否已有值
+    df_sql[f"{check_col2} satisify"]  + np.where(df_sql[check_col].str.match(pattern2),"","FAN_number_error; ")
+    ,np.where(df_sql[check_col].str.match(pattern2),"","FAN_number_error; ")   
+    )
 
     with sqlite3.connect(db_address) as conn:
         df_sql.to_sql(table_name2, conn, if_exists='replace', index=False) # 新增資料表
         select_check = pd.read_sql(f"SELECT * FROM  {table_name2} WHERE Country='Togo'", conn)
         return select_check
+
 
 
 def text_check (db_address,table_name2,check_col2,check_text):

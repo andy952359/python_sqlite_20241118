@@ -4,9 +4,9 @@ import numpy as np
 import chardet
 
 
-def insert_csv (csv_address3,db_address,table_name,table_name2,on_etl,csv_name3):
+def insert_csv (csv_address3,db_address,table_name,table_name2,on_etl,on_etl_2,csv_name3):
     
-    df3 = pd.read_csv(csv_address3, encoding='BIG5')  # 讀取CSV資料集檔案，BIG5
+    df3 = pd.read_csv(csv_address3, encoding='utf-8-sig')  # 讀取CSV資料集檔案，BIG5
 
     # 讀sql
     with sqlite3.connect(db_address) as conn:
@@ -18,16 +18,16 @@ def insert_csv (csv_address3,db_address,table_name,table_name2,on_etl,csv_name3)
     ## A4 == B1 & B12 == 'OK' ## A4 == B1 & B12 != 'OK'
     
     
-    df_trans_column = df_sql.merge(df3_suffix, left_on = f"{on_etl}", right_on = f"{on_etl}_{csv_name3}", how = 'inner')
+    df_trans_column = df_sql.merge(df3_suffix, left_on = f"{on_etl}", right_on = f"{on_etl_2}_{csv_name3}", how = 'inner')
     # 比對on，吻合的補到最左欄，重複不剃除
     df_trans_column = df_trans_column.assign(status_etl = f"{on_etl} satisify") # 新增status欄
 
     ## ~A4
-    df3_only = df3_suffix[~df3_suffix[f"{on_etl}_{csv_name3}"].isin(df_sql[f"{on_etl}"])] # 不吻合放到最下列
+    df3_only = df3_suffix[~df3_suffix[f"{on_etl_2}_{csv_name3}"].isin(df_sql[f"{on_etl}"])].copy() # 不吻合放到最下列
     df3_only['status_etl'] = f"~{csv_name3}"
 
     ## ~B1
-    df_sql_only = df_sql[~df_sql[f"{on_etl}"].isin(df3_suffix[f"{on_etl}_{csv_name3}"])]
+    df_sql_only = df_sql[~df_sql[f"{on_etl}"].isin(df3_suffix[f"{on_etl_2}_{csv_name3}"])].copy()
     df_sql_only['status_etl'] = '~df_sql'
 
     # Step 5: 拼接合併結果、df2_only 和 df_only
