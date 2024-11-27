@@ -3,86 +3,52 @@ import sqlite3
 import numpy as np
 
 
-
-def e_number (db_address,table_name2,check_col,check_col2,check_text,pattern1):
-    # 讀sql
-    with sqlite3.connect(db_address) as conn:
-        df_sql = pd.read_sql(f"SELECT * FROM {table_name2}", conn)
-
-    if f"{check_col2} satisify" not in df_sql.columns:
-        df_sql[f"{check_col2} satisify"] = ""  # 初始化為空字串      
-
-    # ^：表示字串的開始。
-    # [A-Za-z]：表示第1個字元為英文字母（大小寫均可）。
-    # \d{5}：表示接下來的5個字元為數字。
-    # [A-Za-z]{9}：表示接下來的9個字元為英文字母（大小寫均可）。
-    # $：表示字串的結束。
-
-    df_sql[f"{check_col2} satisify"] = np.where(
-    df_sql[f"{check_col2} satisify"].notna(),  # 檢查欄位是否已有值
-    df_sql[f"{check_col2} satisify"]  + np.where(df_sql[check_col].str.match(pattern1),"","e_number_error; ")
-    ,np.where(df_sql[check_col].str.match(pattern1),"","e_number_error; ")   
-    )
-
-
-    with sqlite3.connect(db_address) as conn:
-        df_sql.to_sql(table_name2, conn, if_exists='replace', index=False) # 新增資料表
-        select_check = pd.read_sql(f"SELECT * FROM  {table_name2} WHERE Country='Togo'", conn)
-        return select_check
-
-
-
-
-def FAN_number (db_address,table_name2,check_col,check_col2,pattern2):
+def check_number (db_address,table_name2,check_status,check_col,pattern):
     # 讀sql
     with sqlite3.connect(db_address) as conn:
         df_sql = pd.read_sql(f"SELECT * FROM {table_name2}", conn)
         conn.commit()
 
-    # 添加一個新欄位來檢查是否符合格式
-    if f"{check_col2} satisify" not in df_sql.columns:
-        df_sql[f"{check_col2} satisify"] = ""  # 初始化為空字串      
+    if f"{check_status}" not in df_sql.columns:
+        df_sql[f"{check_status}"] = ""  # 初始化為空字串
+        
 
-    df_sql[f"{check_col2} satisify"] = np.where(
-    df_sql[f"{check_col2} satisify"].notna(),  # 檢查欄位是否已有值
-    df_sql[f"{check_col2} satisify"]  + np.where(df_sql[check_col].str.match(pattern2),"","FAN_number_error; ")
-    ,np.where(df_sql[check_col].str.match(pattern2),"","FAN_number_error; ")   
+    df_sql[f"{check_status}"] = np.where(
+    df_sql[f"{check_status}"].notna(),  # 檢查欄位是否已有值
+    df_sql[f"{check_status}"]  + np.where(df_sql[check_col].str.match(pattern),"",f"{check_col}_number_error; ")
+    ,np.where(df_sql[check_col].str.match(pattern),"",f"{check_col}_number_error; ")   
     )
-
+    ## check
     with sqlite3.connect(db_address) as conn:
         df_sql.to_sql(table_name2, conn, if_exists='replace', index=False) # 新增資料表
-        select_check = pd.read_sql(f"SELECT * FROM  {table_name2} WHERE Country='Togo'", conn)
-        return select_check
+        
 
 
 
-def text_check (db_address,table_name2,check_col2,check_text):
+def text_check (db_address,table_name2,check_status,check_col,check_text):
     # 讀sql
     with sqlite3.connect(db_address) as conn:
         df_sql = pd.read_sql(f"SELECT * FROM {table_name2}", conn)
         conn.commit()
 
-    if f"{check_col2} satisify" not in df_sql.columns:
-        df_sql[f"{check_col2} satisify"] = ""  # 初始化為空字串   
+    if f"{check_status}" not in df_sql.columns:
+        df_sql[f"{check_status}"] = ""  # 初始化為空字串   
 
     # df_sql[f"{check_col2} satisify"] = np.where(df_sql[check_col2] == check_text,                                          
     # f"{check_col2} == {check_text}", 
     # f"{check_col2} != {check_text}")
 
-    df_sql[f"{check_col2} satisify"] = np.where(
-    df_sql[f"{check_col2} satisify"].notna(),  # 檢查欄位是否已有值
-    df_sql[f"{check_col2} satisify"] + np.where(df_sql[check_col2] == check_text,
-        f"{check_col2} == {check_text}; ",
-        f"{check_col2} != {check_text}; ")
-    ,np.where(df_sql[check_col2] == check_text, 
-        f"{check_col2} == {check_text}; ",
-        f"{check_col2} != {check_text}; ")   
+    df_sql[f"{check_status}"] = np.where(
+    df_sql[f"{check_status}"].notna(),  # 檢查欄位是否已有值
+    df_sql[f"{check_status}"] + np.where(df_sql[check_col] == check_text,
+        f"{check_col} == {check_text}; ",
+        f"{check_col} != {check_text}; ")
+    ,np.where(df_sql[check_col] == check_text, 
+        f"{check_col} == {check_text}; ",
+        f"{check_col} != {check_text}; ")   
     )
-
-
-
+    ## check
     with sqlite3.connect(db_address) as conn:
         df_sql.to_sql(table_name2, conn, if_exists='replace', index=False) # 新增資料表
-        select_check = pd.read_sql(f"SELECT * FROM  {table_name2} WHERE Country='Togo'", conn)
-        return select_check
+
     
