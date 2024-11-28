@@ -14,12 +14,16 @@ def insert_csv (csv_address,csv_address2,db_address,table_name,on,on_2,csv_name,
 
     
     df2_suffix = df2.rename(columns={col: f"{col}_{csv_name2}" for col in df2.columns}) # 手動為 df2 欄位加上後綴 '_df2'
-    df2_only = df2_suffix[~df2_suffix[f"{on_2}_{csv_name2}"].isin(df[on])].copy() # 不吻合放到最下列
+    df2_only = df2_suffix.loc[~df2_suffix[f"{on_2}_{csv_name2}"].isin(df[on])].copy() # 不吻合放到最下列
+    df2_only = df2_only.dropna(how='all')
     df2_only['status'] = f"~{csv_name2}"
-
     
-    df_only = df[~df[on].isin(df2[on_2])].copy()
+    
+    df_suffix = df.rename(columns={col: f"{col}_{csv_name}" for col in df.columns}) # 手動為 df2 欄位加上後綴 '_df2'
+    df_only = df_suffix.loc[~df_suffix[f"{on}_{csv_name}"].isin(df2[on_2])].copy()
+    df_only = df_only.dropna(how='all')
     df_only['status'] = f"~{csv_name}"
+    
 
     # Step 5: 拼接合併結果、df2_only 和 df_only
     df_final = pd.concat([df_trans_column, df2_only, df_only], ignore_index=True)
