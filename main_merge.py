@@ -8,6 +8,7 @@ import insert2
 import etl_insert
 import column_modify as cm
 import check
+import analysis
 import output
 
 folder_path = f".\csv"
@@ -23,17 +24,19 @@ csv_path3 = f".\csv\{csv_name3}.csv"
 output_address = ".\csv\\table_1.xlsx"
 output_address2 = ".\csv\\table_2.xlsx"
 output_address3 = ".\csv\\table_3.xlsx"
+output_address4 = ".\csv\\table_4.xlsx"
 table_name = "customers"
 table_name2 = "customers_2"
 db_address = ".\db\customers-2000000.db" 
 add_c = "期數"
 add_text = "108"
-delete_c = "check_status"
+delete_c = "(0, 'analysis_status')"
 on = "11碼電號"
 on_2 = "電號"
 on_etl = f"表號_{csv_name2}"
 on_etl_2 = "電表 ID"
-check_status = "check_status"
+check_status = "check_number"
+analysis_status = "analysis_status"
 MN_status = "MN_check"
 check_col1 = f"11碼電號_{csv_name}"
 check_col2 = f"表號_{csv_name2}"
@@ -58,10 +61,12 @@ pattern3 = r'^[A][D]\d{10}$'
 # c_return = cm.add_column (db_address,table_name, add_c, add_text)
 # text = cm.delete_column (db_address,table_name2,delete_c)
 
-selected_files = choose.select_files(folder_path)
-xlsx2csv.xlsx_path_to_csv (selected_files[0])
-xlsx2csv.xlsx_path_to_csv (selected_files[1])
-xlsx2csv.xlsx_path_to_csv (selected_files[2])
+
+# selected_files = choose.select_files(folder_path)
+# xlsx2csv.xlsx_path_to_csv (selected_files[0])
+# xlsx2csv.xlsx_path_to_csv (selected_files[1])
+# xlsx2csv.xlsx_path_to_csv (selected_files[2])
+
 
 # xlsx2csv.xlsx_to_csv_keep_zeros (xlsx_path1, csv_path1)
 # xlsx2csv.xlsx_to_csv_keep_zeros (xlsx_path2, csv_path2)
@@ -78,8 +83,10 @@ xlsx2csv.xlsx_path_to_csv (selected_files[2])
 # check.text_check (db_address,table_name2,check_status,check_col4,check_text)
 # check.MN_check (db_address,table_name2,MN_status,check_col5,check_text2)
 
+analysis.status(db_address, table_name2, analysis_status)
 
 # output.xlsx (db_address,table_name,output_address)
 # output.xlsx (db_address,table_name2,output_address2)
-# output.choice_xlsx (db_address,table_name2,subset,output_address3)
-
+# output.unduplicate_xlsx (db_address,table_name2,subset,output_address3)
+# output.default_xlsx(db_address, table_name2, output_address4)
+# output.choice_xlsx (db_address,table_name2,output_address4)
