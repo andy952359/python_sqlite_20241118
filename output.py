@@ -24,8 +24,8 @@ def default_xlsx(db_address, table_name, output_address):
         df_sql = pd.read_sql(f"SELECT * FROM {table_name}", conn)
 
     columns = df_sql.columns.tolist()
-    selected_cols = [1, 103, 7, 125, 156, 132, 158, 22, 36, 99, 101, 42, 84, 51, 143,
-                     61, 29, 162, 84, 134, 145, 146, 147, 148, 144, 152, 153, 155, 21, 165, 166, 167]  # 儲存使用者選擇的欄位
+    selected_cols = [1, 103, 7, 125, 156, 132, 158, 22, 36, 99, 101, 42, 84, 51, 143, 61, 29, 
+                     162, 84, 134, 145, 146, 147, 148, 144, 152, 153, 155, 21, 165, 166, 167, 168]  # 儲存使用者選擇的欄位
     
 
     # 過濾索引，將有效的對應欄位加入列表
@@ -38,7 +38,7 @@ def default_xlsx(db_address, table_name, output_address):
     choice_df.to_excel(output_address, index=False, engine='openpyxl')
 
 
-def choice_xlsx(db_address, table_name, output_address):
+def choices_column_xlsx(db_address, table_name, output_address):
     # 讀取資料表
     with sqlite3.connect(db_address) as conn:
         df_sql = pd.read_sql(f"SELECT * FROM {table_name}", conn)
@@ -81,4 +81,24 @@ def choice_xlsx(db_address, table_name, output_address):
     choice_df.to_excel(output_address, index=False, engine='openpyxl')
 
 
+def choice_meter_default_xlsx(db_address, table_name, xlsx_address, on, on_c, output_address):
+    # 讀取資料表
+    with sqlite3.connect(db_address) as conn:
+        df_sql = pd.read_sql(f"SELECT * FROM {table_name}", conn)
 
+    df = pd.read_excel(xlsx_address, dtype=str)  # 讀取CSV資料集檔案
+    df_trans_column = df_sql.merge(df, left_on = on, right_on = on_c, how="inner")    
+
+    columns = df_trans_column.columns.tolist()
+    selected_cols = [1, 103, 7, 125, 156, 132, 158, 22, 36, 99, 101, 42, 84, 51, 143, 61, 29, 
+                     162, 84, 134, 145, 146, 147, 148, 144, 152, 153, 155, 21, 165, 166, 167, 168]  # 儲存使用者選擇的欄位
+    
+
+    # 過濾索引，將有效的對應欄位加入列表
+    selected_cols = [columns[i] for i in selected_cols if 0 <= i < len(columns)]
+
+
+    # 建立新的 DataFrame
+    choice_df = df_trans_column[selected_cols]
+    # 將結果存為 Excel
+    choice_df.to_excel(output_address, index=False, engine='openpyxl')
