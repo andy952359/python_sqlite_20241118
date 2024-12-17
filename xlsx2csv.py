@@ -16,6 +16,7 @@ def xlsx_path_to_csv(xlsx_path, encoding='utf-8-sig'):
     # 儲存為 CSV，確保中文和開頭的 0 被正確保留
     df.to_csv(csv_path, index=False, encoding=encoding)
     print(f"成功轉換，檔案保存至：{csv_path}")
+    return csv_path
 
 
 
