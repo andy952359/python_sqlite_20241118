@@ -32,3 +32,28 @@ def insert_csv (csv_address,csv_address2,db_address,table_name,on,on_2,csv_name,
     with sqlite3.connect(db_address) as conn:
         df_final.to_sql(table_name, conn, if_exists='replace', index=False) # 新增資料表
 
+
+def insert_plus (csv_address,csv_address2,on,on_2,on_3):
+    df = pd.read_csv(csv_address, dtype=str)  # 讀取CSV資料集檔案
+    df2 = pd.read_csv(csv_address2, dtype=str)  # 讀取CSV資料集檔案
+
+    # 只保留 df2 中的 `on_3` 欄位
+    df2_filtered = df2[[on_2, on_3]]
+
+    # 進行合併，只補 `on_3` 欄位到 `df`
+    df_trans_column = df.merge(df2_filtered, left_on=on, right_on=on_2, how='left')
+
+    return df_trans_column  # 回傳處理後的 DataFrame
+
+
+def insert_kill (csv_address,csv_address2,on,on_2,on_3):
+    df = pd.read_csv(csv_address, dtype=str)  # 讀取CSV資料集檔案
+    df2 = pd.read_csv(csv_address2, dtype=str)  # 讀取CSV資料集檔案
+
+    # 取得 df2 中符合 on_2 的 on_3 值
+    matched_on_3 = df2[df2[on_2].isin(df[on])][on_3].dropna().unique()
+
+    # 刪除 df 中 on_3 欄位內包含 matched_on_3 的列
+    df_cleaned = df[~df[on_3].isin(matched_on_3)]
+
+    return df_cleaned  # 回傳刪除後的 DataFrame

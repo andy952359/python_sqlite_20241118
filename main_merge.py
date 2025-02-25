@@ -11,25 +11,26 @@ import column_modify as cm
 import check
 import analysis
 import output
+import report
 
 folder_path = f".\csv"
 
-selected_files = choose.select_files(folder_path)
-csv_path1 = xlsx2csv.xlsx_path_to_csv (selected_files[0])
-csv_name1 = Path(csv_path1).stem
-csv_path2 = xlsx2csv.xlsx_path_to_csv (selected_files[1])
-csv_name2 = Path(csv_path2).stem
-csv_path3 = xlsx2csv.xlsx_path_to_csv (selected_files[2])
-csv_name3 = Path(csv_path3).stem
+# selected_files = choose.select_files(folder_path)
+# csv_path1 = xlsx2csv.xlsx_path_to_csv (selected_files[0])
+# csv_name1 = Path(csv_path1).stem
+# csv_path2 = xlsx2csv.xlsx_path_to_csv (selected_files[1])
+# csv_name2 = Path(csv_path2).stem
+# csv_path3 = xlsx2csv.xlsx_path_to_csv (selected_files[2])
+# csv_name3 = Path(csv_path3).stem
 
-# csv_name1 = "總表_2024_1213"
+csv_name1 = "四期_20250218"
 # csv_name2 = "Ami-2024-12-13-1733"
 # csv_name3 = "AMI-108-ETL-2024-12-12"
-# csv_name4 = "電號"
+csv_name4 = "電號"
 # xlsx_path1 = f".\csv\{csv_name1}.xlsx"
 # xlsx_path2 = f".\csv\{csv_name2}.xlsx"
 # xlsx_path3 = f".\csv\{csv_name3}.xlsx"
-# xlsx_path4 = f".\csv\{csv_name4}.xlsx"
+xlsx_path4 = f".\csv\{csv_name4}.xlsx"
 # csv_path1 = f".\csv\{csv_name}.csv"
 # csv_path2 = f".\csv\{csv_name2}.csv"
 # csv_path3 = f".\csv\{csv_name3}.csv"
@@ -45,18 +46,20 @@ add_text = "108"
 delete_c = "analysis_status"
 on = "11碼電號"
 on_2 = "電號"
-on_etl = f"表號_{csv_name2}"
-on_etl_2 = "電表 ID"
+# on_etl = f"表號_{csv_name2}"
+# on_etl_2 = "電表 ID"
 on_c = "電號"
-check_status = "check_number"
-analysis_status = "analysis_status"
-MN_status = "MN_check"
+on_plus = ""
+on_kill = ""
+# check_status = "check_number"
+# analysis_status = "analysis_status"
+# MN_status = "MN_check"
 check_col1 = f"11碼電號_{csv_name1}"
-check_col2 = f"表號_{csv_name2}"
-check_col3 = f"FAN 號_{csv_name2}"
-check_col4 = f"施工問題_{csv_name2}"
-check_col5 = f"MN Count_{csv_name3}"
-subset = f"11碼電號_{csv_name1}"
+# check_col2 = f"表號_{csv_name2}"
+# check_col3 = f"FAN 號_{csv_name2}"
+# check_col4 = f"施工問題_{csv_name2}"
+# check_col5 = f"MN Count_{csv_name3}"
+# subset = f"11碼電號_{csv_name1}"
 check_text = '無'
 check_text2 = "0"
 pattern1 = r'^\d{11}$'
@@ -75,29 +78,28 @@ pattern3 = r'^[A][D]\d{10}$'
 # text = cm.delete_column (db_address,table_name2,delete_c)
 
 
-
-
-
 # xlsx2csv.xlsx_to_csv_keep_zeros (xlsx_path1, csv_path1)
 # xlsx2csv.xlsx_to_csv_keep_zeros (xlsx_path2, csv_path2)
 # xlsx2csv.xlsx_to_csv_keep_zeros (xlsx_path3, csv_path3)
 
 
-insert2.insert_csv (csv_path1,csv_path2,db_address,table_name,on,on_2,csv_name1,csv_name2)
-etl_insert.insert_csv (csv_path3,db_address,table_name,table_name2,on_etl,on_etl_2,csv_name3)
+# insert2.insert_csv (csv_path1,csv_path2,db_address,table_name,on,on_2,csv_name1,csv_name2)
+# etl_insert.insert_csv (csv_path3,db_address,table_name,table_name2,on_etl,on_etl_2,csv_name3)
 
 
-check.check_number (db_address,table_name2,check_status,check_col1,pattern1)
-check.check_number (db_address,table_name2,check_status,check_col2,pattern2)
-check.check_number (db_address,table_name2,check_status,check_col3,pattern3)
-check.text_check (db_address,table_name2,check_status,check_col4,check_text)
-check.MN_check (db_address,table_name2,MN_status,check_col5,check_text2)
+# check.check_number (db_address,table_name2,check_status,check_col1,pattern1)
+# check.check_number (db_address,table_name2,check_status,check_col2,pattern2)
+# check.check_number (db_address,table_name2,check_status,check_col3,pattern3)
+# check.text_check (db_address,table_name2,check_status,check_col4,check_text)
+# check.MN_check (db_address,table_name2,MN_status,check_col5,check_text2)
 
-analysis.status(db_address, table_name2, csv_name1, csv_name2, csv_name3, on, on_2, on_etl, analysis_status)
+# analysis.status(db_address, table_name2, csv_name1, csv_name2, csv_name3, on, on_2, on_etl, analysis_status)
 
 # output.xlsx (db_address,table_name,output_address)
 # output.xlsx (db_address,table_name2,output_address2)
 # output.unduplicate_xlsx (db_address,table_name2,subset,output_address3)
-output.default_xlsx(db_address, table_name2, output_address4)
+# output.default_xlsx(db_address, table_name2, output_address4)
 # output.choice_column_xlsx (db_address,table_name2,output_address4)
 # output.choice_meter_default_xlsx(db_address, table_name2, xlsx_path4, check_col1, on_c, output_address4)
+
+report.meter_reading_comparison(db_address, table_name2, xlsx_path4, check_col1, on_c, on_plus, output_address4)
