@@ -18,24 +18,25 @@ def meter_reading_comparison(db_address, table_name, xlsx_address, on, on_c, on_
     df_trans_column = df_sql.merge(df, left_on = on, right_on = on_c, how="inner")    
 
     columns = df_trans_column.columns.tolist()
-    selected_cols = [1, 103, 7, 36, 99, 101, 42, 84, 51, 22, 61, 88]  # 儲存使用者選擇的欄位
+    selected_cols = [1, 103, 7, 36, 99, 101, 42, 84, 51, 22, 61, 162]  # 儲存使用者選擇的欄位
     # 過濾索引，將有效的對應欄位加入列表
     selected_cols = [columns[i] for i in selected_cols if 0 <= i < len(columns)]
+
+    
 
 
     # 建立新的 DataFrame
     choice_df = df_trans_column[selected_cols]
-    choice_df.insert(0, '項次', choice_df.reset_index().index + 1)
+    choice_df.insert(0, '項次', "")
     choice_df["人工讀值_Ami-2025-02-05-1119"] = pd.to_numeric(choice_df["人工讀值_Ami-2025-02-05-1119"], errors='coerce')
-
+    # A 欄中所有包含 ; 的內容，; 及其之後的部分都會被刪除。
+    choice_df["FAN 號_Ami-2025-02-05-1119"] = choice_df["FAN 號_Ami-2025-02-05-1119"].str.split(";").str[0]
 
     selected_files = choose.select_files(folder_path)
     csv_path1 = xlsx2csv.xlsx_path_to_csv (selected_files[0])
-    csv_name1 = Path(csv_path1).stem
     csv_path2 = xlsx2csv.xlsx_path_to_csv (selected_files[1])
-    csv_name2 = Path(csv_path2).stem
     csv_path3 = xlsx2csv.xlsx_path_to_csv (selected_files[2])
-    csv_name3 = Path(csv_path3).stem
+
 
     df_path1 = pd.read_csv(csv_path1, dtype=str)  # 讀取CSV資料集檔案
     # 進行 merge，將 df1 的第 24 欄 (col_24) 插入 df2 的第 4 欄 (col_4)
@@ -55,13 +56,27 @@ def meter_reading_comparison(db_address, table_name, xlsx_address, on, on_c, on_
     choice_df["連線判斷"] = "已連線"
     choice_df["批次"] = "四期第5-1批"
     choice_df["HES系統讀表次數"] = "96"
-    choice_df["異常原因"] = choice_df["異常原因"].fillna('#N/A')
+    choice_df["異常原因_AMI-111-ETL-2025-02-04"] = choice_df["異常原因_AMI-111-ETL-2025-02-04"].fillna('#N/A')
     choice_df["通訊改善中"] = choice_df["通訊改善中"].fillna('#N/A')
     choice_df = choice_df.iloc[:, [0,1,2,3,13,4,5,6,7,8,18,19,20,21,9,10,16,15,22,17,12,14]] 
+
+    # 篩選 A 欄或 B 欄 **任一** 不為 "#N/A" 的列
+    mask = (choice_df["異常原因_AMI-111-ETL-2025-02-04"] != "#N/A") | (choice_df["通訊改善中"] != "#N/A") | choice_df["HES用電"].fillna("").eq("")
+    moved_rows = choice_df[mask]  # 要移動的資料
+    remaining_rows = choice_df[~mask]  # 剩下的資料
+
+    remaining_rows.loc[:, "項次"] = range(1, len(remaining_rows) + 1)
+    moved_rows.loc[:, "項次"] = range(1, len(moved_rows) + 1)
+    moved_rows.loc[:, "FAN紅燈(電源燈)"] = "紅燈常亮"
+    moved_rows.loc[:, "FAN綠燈(通訊燈)"] = "綠燈閃爍"
+    moved_rows.loc[:, "連線判斷"] = "#N/A"
+    moved_rows.loc[:, "HES系統讀表次數"] = "#N/A"
     
 
+    # 將結果寫回 Excel
+    with pd.ExcelWriter(output_address, engine="openpyxl", mode="w") as writer:
+        remaining_rows.to_excel(writer, sheet_name="驗收清冊-已納管-已連線", index=False)  # 更新原分頁
+        moved_rows.to_excel(writer, sheet_name="已納管-電表或通訊問題案", index=False)  # 移動的資料寫入新分頁
+        
 
-
-    # 將結果存為 Excel
-    choice_df.to_excel(output_address, index=False, engine='openpyxl')
 
